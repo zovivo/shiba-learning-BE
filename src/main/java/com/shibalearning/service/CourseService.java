@@ -6,10 +6,12 @@ import com.shibalearning.entity.User;
 import com.shibalearning.entity.enu.ExceptionCode;
 import com.shibalearning.entity.enu.SystemException;
 import com.shibalearning.input.create.CourseInput;
+import com.shibalearning.input.update.CourseUpdateInput;
 import com.shibalearning.repository.CourseRepository;
 import com.shibalearning.repository.SubjectRepository;
 import com.shibalearning.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -32,18 +34,68 @@ public class CourseService {
         if (subject == null)
             throw new SystemException(ExceptionCode.SUBJECT_NOT_FOUND);
         User teacher = userRepository.findById(courseInput.getTeacherId());
-        if (teacher == null || teacher.getRole().getId() == 1 )
+        if (teacher == null || teacher.getRole().getId() == 2 )
             throw new SystemException(ExceptionCode.USER_NOT_FOUND);
         Course course = new Course(courseInput);
         course.setSubject(subject);
         course.setTeacher(teacher);
         if (courseInput.getImage() != null)
             course.setImage(cloudinaryService.uploadFile(courseInput.getImage()));
+        if (courseInput.getCover() != null)
+            course.setCover(cloudinaryService.uploadFile(courseInput.getCover()));
         return courseRepository.save(course);
     }
 
-    public Page<Course> search(int page, int size){
+    public Course update(CourseUpdateInput courseUpdateInput) throws SystemException {
+        Course course = courseRepository.findById(courseUpdateInput.getId());
+        if (course == null)
+            throw new SystemException(ExceptionCode.COURSE_NOT_FOUND);
+        if (courseUpdateInput.getNewSubjectId() > 0 ){
+            Subject newSubject = subjectRepository.findById(courseUpdateInput.getNewSubjectId());
+            if (newSubject == null)
+                throw new SystemException(ExceptionCode.SUBJECT_NOT_FOUND);
+            else
+                course.setSubject(newSubject);
+        }
+        if (courseUpdateInput.getNewTeacherId() > 0 ){
+            User newTeacher = userRepository.findById(courseUpdateInput.getNewTeacherId());
+            if (newTeacher == null || newTeacher.getRole().getId() == 2 )
+                throw new SystemException(ExceptionCode.USER_NOT_FOUND);
+            else
+                course.setTeacher(newTeacher);
+        }
+        if (courseUpdateInput.getNewName() != null && !courseUpdateInput.getNewName().isEmpty())
+            course.setName(courseUpdateInput.getNewName());
+        if (courseUpdateInput.getNewDescription() != null && !courseUpdateInput.getNewDescription().isEmpty())
+            course.setDescription(courseUpdateInput.getNewDescription());
+        if (courseUpdateInput.getNewImage() != null)
+            course.setImage(cloudinaryService.uploadFile(courseUpdateInput.getNewImage()));
+        if (courseUpdateInput.getNewCover() != null)
+            course.setCover(cloudinaryService.uploadFile(courseUpdateInput.getNewCover()));
+        return courseRepository.save(course);
+    }
+
+    public Page<Course> search(int page, int size, String name, Long subjectId){
         Pageable pageable = PageRequest.of(page, size);
-        return courseRepository.findAll(pageable);
+        if (name == null)
+            name = "";
+        if (subjectId != null)
+            return courseRepository.findAllBySubject_IdAndNameContaining(pageable, subjectId, name);
+        return courseRepository.findAllByNameContains(pageable, name);
+    }
+
+    public Course getById(long id) throws SystemException {
+        Course course = courseRepository.findById(id);
+        if (course == null)
+            throw new SystemException(ExceptionCode.COURSE_NOT_FOUND);
+        return course;
+    }
+
+    public void deleteById(long id) throws SystemException {
+        try {
+            courseRepository.deleteById((Long) id);
+        }catch (EmptyResultDataAccessException e){
+            throw new SystemException(ExceptionCode.COURSE_NOT_FOUND);
+        }
     }
 }

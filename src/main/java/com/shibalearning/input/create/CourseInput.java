@@ -14,6 +14,7 @@ public class CourseInput {
     private String name;
     private String description;
     private MultipartFile image;
+    private MultipartFile cover;
     private long teacherId;
     private long subjectId;
 }

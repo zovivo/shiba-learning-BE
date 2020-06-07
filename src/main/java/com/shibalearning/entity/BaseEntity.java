@@ -28,14 +28,14 @@ public class BaseEntity implements Serializable {
 
     @PrePersist
     public void prePersist() {
-        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT+7"));
+        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("Asia/Singapore"));
         Timestamp date = new Timestamp(cal.getTimeInMillis());
         this.createTime = date;
     }
 
     @PreUpdate
     public void preUpdate() {
-        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT+7"));
+        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("Asia/Singapore"));
         Timestamp date = new Timestamp(cal.getTimeInMillis());
         this.updateTime = date;
     }

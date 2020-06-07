@@ -24,6 +24,8 @@ public class Course extends BaseEntity {
     private String description;
     @Column
     private String image;
+    @Column
+    private String cover;
     @ManyToOne
     @JoinColumn(name = "teacherId")
     private User teacher;
