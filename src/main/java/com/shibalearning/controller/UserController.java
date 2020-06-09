@@ -1,7 +1,9 @@
 package com.shibalearning.controller;
 
 import com.shibalearning.entity.User;
+import com.shibalearning.entity.enu.ExceptionCode;
 import com.shibalearning.entity.enu.Status;
+import com.shibalearning.entity.enu.SystemException;
 import com.shibalearning.entity.response.ResponseData;
 import com.shibalearning.input.create.UserInput;
 import com.shibalearning.input.create.UserLoginInput;
@@ -32,32 +34,44 @@ public class UserController {
     public ResponseData login(@RequestBody UserLoginInput userLoginInput){
         User user = userService.login(userLoginInput);
         if (user == null)
-            return new ResponseData(Status.FAIL,"Tên tài khoản hoặc mật khẩu không đúng",null);
-        return new ResponseData(Status.SUCCESS,"Đăng nhập thành công",user);
+            return new ResponseData(Status.FAIL, ExceptionCode.FAIL,"Tên tài khoản hoặc mật khẩu không đúng",null);
+        return new ResponseData(Status.SUCCESS, ExceptionCode.SUCCESS,"Đăng nhập thành công",user);
     }
 
     @PostMapping("create")
     public ResponseData create(@ModelAttribute UserInput userInput){
-        User user = userService.create(userInput);
-        if (user == null)
-            return new ResponseData(Status.FAIL,"userName đã tồn tại",null);
-        return new ResponseData(Status.SUCCESS,"Tạo tài khoản thành công",user);
+        User user = null;
+        try {
+            user = userService.create(userInput);
+        } catch (SystemException e) {
+            if (e.getExceptionCode() == ExceptionCode.USER_NAME_EXIST) {
+                return new ResponseData(Status.FAIL, ExceptionCode.USER_NAME_EXIST,"userName đã tồn tại",null);
+            }
+            if (e.getExceptionCode() == ExceptionCode.EMAIL_EXIST) {
+                return new ResponseData(Status.FAIL, ExceptionCode.EMAIL_EXIST,"email đã tồn tại",null);
+            }
+        }
+        return new ResponseData(Status.SUCCESS,ExceptionCode.SUCCESS ,"Tạo tài khoản thành công",user);
     }
 
     @PostMapping("update")
     public ResponseData update(@ModelAttribute UserUpdateInput userUpdateInput){
-        User user = userService.updateProfile(userUpdateInput);
-        if (user == null)
-            return new ResponseData(Status.FAIL,"Không tìm thấy user",null);
-        return new ResponseData(Status.SUCCESS,"Cập nhật thông tài khoản thành công",user);
+        User user = null;
+        try {
+            user = userService.updateProfile(userUpdateInput);
+        } catch (SystemException e) {
+            if (e.getExceptionCode() == ExceptionCode.USER_NOT_FOUND)
+                return new ResponseData(Status.FAIL, ExceptionCode.USER_NOT_FOUND,"Không tìm thấy user",null);
+        }
+        return new ResponseData(Status.SUCCESS,ExceptionCode.SUCCESS,"Cập nhật thông tài khoản thành công",user);
     }
 
     @PostMapping("change-password")
     public ResponseData changePassword(@RequestBody UserUpdateInput userUpdateInput){
         User user = userService.changePassword(userUpdateInput);
         if (user == null)
-            return new ResponseData(Status.FAIL,"Không tìm thấy user hoặc sai mật khẩu",null);
-        return new ResponseData(Status.SUCCESS,"Đổi mật khẩu thành công",user);
+            return new ResponseData(Status.FAIL,ExceptionCode.USER_NOT_FOUND ,"Không tìm thấy user hoặc sai mật khẩu",null);
+        return new ResponseData(Status.SUCCESS, ExceptionCode.SUCCESS,"Đổi mật khẩu thành công",user);
     }
 
     @PostMapping("upload")
@@ -67,14 +81,14 @@ public class UserController {
 
     @GetMapping("search")
     public ResponseData search(@RequestParam int page, @RequestParam int size, @RequestParam(required = false) String userName,  @RequestParam(required = false) String email, @RequestParam(required = false) String sortBy){
-        return new ResponseData(Status.SUCCESS,"Thành công",userService.search(page, size,userName,email,sortBy));
+        return new ResponseData(Status.SUCCESS, ExceptionCode.SUCCESS,"Thành công",userService.search(page, size,userName,email,sortBy));
     }
 
     @GetMapping("get-by-username")
     public ResponseData search(@RequestParam String userName){
         User user = userService.getByUserName(userName);
         if (user == null)
-            return new ResponseData(Status.SUCCESS,"Không tìm thấy user",user);
-        return new ResponseData(Status.SUCCESS,"Thành công",user);
+            return new ResponseData(Status.SUCCESS, ExceptionCode.SUCCESS,"Không tìm thấy user",user);
+        return new ResponseData(Status.SUCCESS, ExceptionCode.SUCCESS,"Thành công",user);
     }
 }

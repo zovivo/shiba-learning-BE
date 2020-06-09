@@ -2,6 +2,8 @@ package com.shibalearning.service;
 
 import com.shibalearning.entity.Role;
 import com.shibalearning.entity.User;
+import com.shibalearning.entity.enu.ExceptionCode;
+import com.shibalearning.entity.enu.SystemException;
 import com.shibalearning.input.create.UserInput;
 import com.shibalearning.input.create.UserLoginInput;
 import com.shibalearning.input.update.UserUpdateInput;
@@ -43,32 +45,34 @@ public class UserService {
         return user;
     }
 
-    public User create(UserInput userInput){
+    public User create(UserInput userInput) throws SystemException {
         if (userRepository.findFirstByUserName(userInput.getUserName()) != null){
-            return null;
-        }else {
-            User user = new User(userInput);
-            if(userInput.getType() == 1){
-                Role teacher = roleRepository.findById(1);
-                user.setRole(teacher);
-            }else {
-                Role student = roleRepository.findById(2);
-                user.setRole(student);
-            }
-            if ( userInput.getAvatar() != null){
-                String avatar = cloudinaryService.uploadFile(userInput.getAvatar());
-                user.setAvatar(avatar);
-            }
-            user = userRepository.save(user);
-            return user;
+            throw new SystemException(ExceptionCode.USER_NAME_EXIST);
         }
+        if (userRepository.findFirstByEmail(userInput.getEmail()) != null){
+            throw new SystemException(ExceptionCode.EMAIL_EXIST);
+        }
+        User user = new User(userInput);
+        if (userInput.getType() == 1) {
+            Role teacher = roleRepository.findById(1);
+            user.setRole(teacher);
+        } else {
+            Role student = roleRepository.findById(2);
+            user.setRole(student);
+        }
+        if (userInput.getAvatar() != null && userInput.getAvatar().getSize() != 0) {
+            String avatar = cloudinaryService.uploadFile(userInput.getAvatar());
+            user.setAvatar(avatar);
+        }
+        user = userRepository.save(user);
+        return user;
     }
 
-    public User updateProfile(UserUpdateInput userUpdateInput){
+    public User updateProfile(UserUpdateInput userUpdateInput) throws SystemException {
         User user = userRepository.findFirstByUserName(userUpdateInput.getUserName());
         if (user == null)
-            return null;
-        if (userUpdateInput.getNewAvatar() != null)
+            throw new SystemException(ExceptionCode.USER_NOT_FOUND);
+        if (userUpdateInput.getNewAvatar() != null && userUpdateInput.getNewAvatar().getSize() != 0)
             user.setAvatar(cloudinaryService.uploadFile(userUpdateInput.getNewAvatar()));
         if (userUpdateInput.getNewEmail() != null)
             user.setEmail(userUpdateInput.getNewEmail());

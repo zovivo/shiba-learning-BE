@@ -79,7 +79,7 @@ public class CourseService {
         Pageable pageable = PageRequest.of(page, size);
         if (name == null)
             name = "";
-        if (subjectId != null)
+        if (subjectId > 0)
             return courseRepository.findAllBySubject_IdAndNameContaining(pageable, subjectId, name);
         return courseRepository.findAllByNameContains(pageable, name);
     }
