@@ -1,6 +1,7 @@
 package com.shibalearning.entity.enu;
 
 public enum ExceptionCode {
+    FEED_BACK_NOT_FOUND,
     LESSON_NOT_FOUND,
     REGISTRATION_NOT_FOUND,
     ROLE_NOT_FOUND,
@@ -10,6 +11,8 @@ public enum ExceptionCode {
     COURSE_NOT_FOUND,
     USER_NAME_EXIST,
     EMAIL_EXIST,
+    REGISTRATION_EXISTED,
+    FEEDBACK_EXISTED,
     SUCCESS,
     FAIL
 }

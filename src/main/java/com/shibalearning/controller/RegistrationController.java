@@ -29,6 +29,8 @@ public class RegistrationController {
                 return new ResponseData(Status.FAIL, ExceptionCode.COURSE_NOT_FOUND, "Không tìm thấy khóa học", null);
             if (e.getExceptionCode() == ExceptionCode.USER_NOT_FOUND)
                 return new ResponseData(Status.FAIL, ExceptionCode.USER_NOT_FOUND, "Không tìm thấy học sinh", null);
+            if (e.getExceptionCode() == ExceptionCode.REGISTRATION_EXISTED)
+                return new ResponseData(Status.FAIL, ExceptionCode.REGISTRATION_EXISTED, "Học sinh đã đăng ký khóa học này rồi", null);
         }
         return new ResponseData(Status.SUCCESS, ExceptionCode.SUCCESS, "Đăng ký khoá học thành công", registration);
     }

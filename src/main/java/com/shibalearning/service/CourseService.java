@@ -66,7 +66,7 @@ public class CourseService {
         }
         if (courseUpdateInput.getNewName() != null && !courseUpdateInput.getNewName().isEmpty())
             course.setName(courseUpdateInput.getNewName());
-        if (courseUpdateInput.getNewDescription() != null && !courseUpdateInput.getNewDescription().isEmpty())
+        if (courseUpdateInput.getNewDescription() != null )
             course.setDescription(courseUpdateInput.getNewDescription());
         if (courseUpdateInput.getNewImage() != null)
             course.setImage(cloudinaryService.uploadFile(courseUpdateInput.getNewImage()));

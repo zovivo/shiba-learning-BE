@@ -34,6 +34,8 @@ public class RegistrationService {
         User student = userRepository.findById(registrationInput.getStudentId());
         if (student == null || student.getRole().getId() == 1)
             throw new SystemException(ExceptionCode.USER_NOT_FOUND);
+        if ( registrationRepository.findFirstByUser_IdAndCourse_Id(registrationInput.getStudentId(), registrationInput.getCourseId()) != null)
+            throw new SystemException(ExceptionCode.REGISTRATION_EXISTED);
         Registration registration = new Registration();
         registration.setCourse(course);
         registration.setUser(student);

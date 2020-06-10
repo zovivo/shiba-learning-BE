@@ -45,11 +45,11 @@ public class LessonService {
         }
         if (lessonUpdateInput.getNewTitle() != null && !lessonUpdateInput.getNewTitle().isEmpty())
             lesson.setTitle(lessonUpdateInput.getNewTitle());
-        if (lessonUpdateInput.getNewDescription() != null && !lessonUpdateInput.getNewDescription().isEmpty())
+        if (lessonUpdateInput.getNewDescription() != null )
             lesson.setDescription(lessonUpdateInput.getNewDescription());
-        if (lessonUpdateInput.getNewDocument() != null && !lessonUpdateInput.getNewDocument().isEmpty())
+        if (lessonUpdateInput.getNewDocument() != null )
             lesson.setDocument(lessonUpdateInput.getNewDocument());
-        if (lessonUpdateInput.getNewVideo() != null && !lessonUpdateInput.getNewVideo().isEmpty())
+        if (lessonUpdateInput.getNewVideo() != null )
             lesson.setVideo(lessonUpdateInput.getNewVideo());
         return lessonRepository.save(lesson);
     }
