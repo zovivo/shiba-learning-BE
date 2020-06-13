@@ -1,6 +1,7 @@
 package com.shibalearning.service;
 
 import com.shibalearning.entity.Course;
+import com.shibalearning.entity.FeedBack;
 import com.shibalearning.entity.Subject;
 import com.shibalearning.entity.User;
 import com.shibalearning.entity.enu.ExceptionCode;
@@ -16,6 +17,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class CourseService {
@@ -39,7 +42,7 @@ public class CourseService {
         Course course = new Course(courseInput);
         course.setSubject(subject);
         course.setTeacher(teacher);
-        if (courseInput.getImage() != null)
+        if (courseInput.getImage() != null && courseInput.getImage().getSize() != 0)
             course.setImage(cloudinaryService.uploadFile(courseInput.getImage()));
         if (courseInput.getCover() != null)
             course.setCover(cloudinaryService.uploadFile(courseInput.getCover()));
@@ -68,7 +71,7 @@ public class CourseService {
             course.setName(courseUpdateInput.getNewName());
         if (courseUpdateInput.getNewDescription() != null )
             course.setDescription(courseUpdateInput.getNewDescription());
-        if (courseUpdateInput.getNewImage() != null)
+        if (courseUpdateInput.getNewImage() != null && courseUpdateInput.getNewImage().getSize() != 0)
             course.setImage(cloudinaryService.uploadFile(courseUpdateInput.getNewImage()));
         if (courseUpdateInput.getNewCover() != null)
             course.setCover(cloudinaryService.uploadFile(courseUpdateInput.getNewCover()));
@@ -79,7 +82,7 @@ public class CourseService {
         Pageable pageable = PageRequest.of(page, size);
         if (name == null)
             name = "";
-        if (subjectId > 0)
+        if (subjectId != null)
             return courseRepository.findAllBySubject_IdAndNameContaining(pageable, subjectId, name);
         return courseRepository.findAllByNameContains(pageable, name);
     }
@@ -97,5 +100,15 @@ public class CourseService {
         }catch (EmptyResultDataAccessException e){
             throw new SystemException(ExceptionCode.COURSE_NOT_FOUND);
         }
+    }
+
+    public Course updateRate(List<FeedBack> feedBacks){
+        Course course = courseRepository.findById(feedBacks.get(0).getCourse().getId());
+        double sumRate = 0.0;
+        for (FeedBack feedBack: feedBacks) {
+            sumRate += feedBack.getRate();
+        }
+        course.setRate((double) Math.round(sumRate/feedBacks.size() * 100) / 100);
+        return courseRepository.save(course);
     }
 }

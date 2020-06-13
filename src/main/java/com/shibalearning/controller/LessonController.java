@@ -19,7 +19,7 @@ public class LessonController {
     private LessonService lessonService;
 
     @PostMapping("create")
-    public ResponseData create(@RequestBody LessonInput lessonInput) throws SystemException {
+    public ResponseData create(@ModelAttribute LessonInput lessonInput) throws SystemException {
         Lesson lesson = null;
         try {
             lesson = lessonService.create(lessonInput);
@@ -36,13 +36,13 @@ public class LessonController {
     }
 
     @PostMapping("update")
-    public ResponseData update(@RequestBody LessonUpdateInput lessonUpdateInput) {
+    public ResponseData update(@ModelAttribute LessonUpdateInput lessonUpdateInput) {
         Lesson lessonUpdated = null;
         try {
             lessonUpdated = lessonService.update(lessonUpdateInput);
         } catch (SystemException e) {
             if (e.getExceptionCode() == ExceptionCode.LESSON_NOT_FOUND)
-                return new ResponseData(Status.FAIL, ExceptionCode.SUBJECT_NOT_FOUND, "Không tìm thấy bài học", null);
+                return new ResponseData(Status.FAIL, ExceptionCode.LESSON_NOT_FOUND, "Không tìm thấy bài học", null);
             if (e.getExceptionCode() == ExceptionCode.COURSE_NOT_FOUND)
                 return new ResponseData(Status.FAIL, ExceptionCode.COURSE_NOT_FOUND, "Không tìm thấy khóa học", null);
         }

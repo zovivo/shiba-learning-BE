@@ -22,6 +22,8 @@ public class LessonService {
     private LessonRepository lessonRepository;
     @Autowired
     private CourseRepository courseRepository;
+    @Autowired
+    private CloudinaryService cloudinaryService;
 
     public Lesson create(LessonInput lessonInput) throws SystemException {
         Course course = courseRepository.findById(lessonInput.getCourseId());
@@ -29,6 +31,8 @@ public class LessonService {
             throw new SystemException(ExceptionCode.COURSE_NOT_FOUND);
         Lesson lesson = new Lesson(lessonInput);
         lesson.setCourse(course);
+        if (lessonInput.getImage() != null && lessonInput.getImage().getSize() != 0)
+            lesson.setImage(cloudinaryService.uploadFile(lessonInput.getImage()));
         return lessonRepository.save(lesson);
     }
 
@@ -43,6 +47,8 @@ public class LessonService {
             else
                 lesson.setCourse(newCourse);
         }
+        if (lessonUpdateInput.getNewImage() != null && lessonUpdateInput.getNewImage().getSize() != 0)
+            lesson.setImage(cloudinaryService.uploadFile(lessonUpdateInput.getNewImage()));
         if (lessonUpdateInput.getNewTitle() != null && !lessonUpdateInput.getNewTitle().isEmpty())
             lesson.setTitle(lessonUpdateInput.getNewTitle());
         if (lessonUpdateInput.getNewDescription() != null )

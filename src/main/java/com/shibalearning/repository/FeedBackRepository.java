@@ -17,4 +17,6 @@ public interface FeedBackRepository extends JpaRepository<FeedBack,Long> {
     Page<FeedBack> findAllByCourse_IdAndUser_Id(Pageable p, Long courseId, Long studentId);
     FeedBack findFirstByCourse_IdAndUser_Id(Long courseId, Long studentId);
     FeedBack findById(long id);
+    List<FeedBack> findAllByCourse_Id(Long courseId);
+
 }

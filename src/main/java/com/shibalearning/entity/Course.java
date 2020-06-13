@@ -32,6 +32,8 @@ public class Course extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "subjectId")
     private Subject subject;
+    @Column
+    private Double rate;
 
     public Course(CourseInput courseInput){
         this.name = courseInput.getName();

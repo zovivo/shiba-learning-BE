@@ -36,8 +36,8 @@ public class RegistrationController {
     }
 
     @GetMapping("search")
-    public ResponseData search(@RequestParam int page, @RequestParam int size, @RequestParam(required = false) Long studentId, @RequestParam(required = false) Long courseId) {
-        return new ResponseData(Status.SUCCESS, ExceptionCode.SUCCESS, "Thành công", registrationService.search(page, size, courseId, studentId));
+    public ResponseData search(@RequestParam int page, @RequestParam int size, @RequestParam(required = false) Long studentId, @RequestParam(required = false) Long courseId, @RequestParam(required = false) Boolean active) {
+        return new ResponseData(Status.SUCCESS, ExceptionCode.SUCCESS, "Thành công", registrationService.search(page, size, courseId, studentId, active));
     }
 
     @PostMapping("update")
@@ -75,5 +75,43 @@ public class RegistrationController {
             return new ResponseData(Status.FAIL, ExceptionCode.REGISTRATION_NOT_FOUND, "Không tìm thấy đăng ký khoá học", null);
         }
         return new ResponseData(Status.SUCCESS, ExceptionCode.SUCCESS, "Thành công", registration);
+    }
+
+    @PostMapping("active-by-id")
+    public ResponseData activeById(@RequestBody RegistrationUpdateInput registrationUpdateInput) {
+        Registration registration = null;
+        try {
+            registration = registrationService.activeById(registrationUpdateInput.getId());
+        } catch (SystemException e) {
+            return new ResponseData(Status.FAIL, ExceptionCode.REGISTRATION_NOT_FOUND, "Không tìm thấy đăng ký khoá học", null);
+        }
+        return new ResponseData(Status.SUCCESS, ExceptionCode.SUCCESS, "Active Thành công", registration);
+    }
+
+    @PostMapping("inactive-by-id")
+    public ResponseData deactivateById(@RequestBody RegistrationUpdateInput registrationUpdateInput) {
+        Registration registration = null;
+        try {
+            registration = registrationService.deactivateById(registrationUpdateInput.getId());
+        } catch (SystemException e) {
+            return new ResponseData(Status.FAIL, ExceptionCode.REGISTRATION_NOT_FOUND, "Không tìm thấy đăng ký khoá học", null);
+        }
+        return new ResponseData(Status.SUCCESS, ExceptionCode.SUCCESS, "Deactivate Thành công", registration);
+    }
+
+    @PostMapping("add-student-to-course")
+    public ResponseData addStudentToCourse(@RequestBody RegistrationInput registrationInput) {
+        Registration registration = null;
+        try {
+            registration = registrationService.addStudentToCourse(registrationInput);
+        } catch (SystemException e) {
+            if (e.getExceptionCode() == ExceptionCode.COURSE_NOT_FOUND)
+                return new ResponseData(Status.FAIL, ExceptionCode.COURSE_NOT_FOUND, "Không tìm thấy khóa học", null);
+            if (e.getExceptionCode() == ExceptionCode.USER_NOT_FOUND)
+                return new ResponseData(Status.FAIL, ExceptionCode.USER_NOT_FOUND, "Không tìm thấy học sinh", null);
+            if (e.getExceptionCode() == ExceptionCode.REGISTRATION_EXISTED)
+                return new ResponseData(Status.FAIL, ExceptionCode.REGISTRATION_EXISTED, "Học sinh đã đăng ký khóa học này rồi", null);
+        }
+        return new ResponseData(Status.SUCCESS, ExceptionCode.SUCCESS, "Đăng ký khoá học thành công", registration);
     }
 }

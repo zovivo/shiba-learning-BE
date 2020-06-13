@@ -23,6 +23,8 @@ public class Lesson extends BaseEntity {
     @Column
     private String description;
     @Column
+    private String image;
+    @Column
     private String document;
     @Column
     private String video;

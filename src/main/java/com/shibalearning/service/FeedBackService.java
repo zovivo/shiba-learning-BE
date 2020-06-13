@@ -15,7 +15,10 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class FeedBackService {
@@ -26,6 +29,8 @@ public class FeedBackService {
     private CourseRepository courseRepository;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private CourseService courseService;
 
     public FeedBack create(FeedBackInput feedBackInput) throws SystemException {
         Course course = courseRepository.findById(feedBackInput.getCourseId());
@@ -36,6 +41,8 @@ public class FeedBackService {
             throw new SystemException(ExceptionCode.USER_NOT_FOUND);
         if (feedBackRepository.findFirstByCourse_IdAndUser_Id(feedBackInput.getCourseId(), feedBackInput.getStudentId()) != null)
             throw new SystemException(ExceptionCode.FEEDBACK_EXISTED);
+        if (feedBackInput.getRate() > 10.00)
+            throw new SystemException(ExceptionCode.RATE_INVALID);
         FeedBack feedBack = new FeedBack(feedBackInput);
         feedBack.setCourse(course);
         feedBack.setUser(student);
@@ -60,6 +67,8 @@ public class FeedBackService {
             else
                 feedBackUpdated.setUser(newStudent);
         }
+        if (feedBackUpdateInput.getNewRate() > 10.00)
+            throw new SystemException(ExceptionCode.RATE_INVALID);
         if (feedBackUpdateInput.getNewRate() > 0 )
             feedBackUpdated.setRate(feedBackUpdateInput.getNewRate());
         if (feedBackUpdateInput.getNewComment() != null)
@@ -92,5 +101,11 @@ public class FeedBackService {
         }catch (EmptyResultDataAccessException e){
             throw new SystemException(ExceptionCode.FEED_BACK_NOT_FOUND);
         }
+    }
+
+    @Async
+    public void updateRateCourse(long courseId){
+        List<FeedBack> feedBacks = feedBackRepository.findAllByCourse_Id(courseId);
+        courseService.updateRate(feedBacks);
     }
 }

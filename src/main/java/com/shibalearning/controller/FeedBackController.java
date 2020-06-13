@@ -23,6 +23,7 @@ public class FeedBackController {
         FeedBack feedBack = null;
         try {
             feedBack = feedBackService.create(feedBackInput);
+            feedBackService.updateRateCourse(feedBack.getCourse().getId());
         } catch (SystemException e) {
             if (e.getExceptionCode() == ExceptionCode.COURSE_NOT_FOUND)
                 return new ResponseData(Status.FAIL, ExceptionCode.COURSE_NOT_FOUND, "Không tìm thấy khóa học", null);
@@ -30,6 +31,8 @@ public class FeedBackController {
                 return new ResponseData(Status.FAIL, ExceptionCode.USER_NOT_FOUND, "Không tìm thấy học sinh", null);
             if (e.getExceptionCode() == ExceptionCode.FEEDBACK_EXISTED)
                 return new ResponseData(Status.FAIL, ExceptionCode.FEEDBACK_EXISTED, "Học sinh đã đánh giá khóa học này rồi", null);
+            if (e.getExceptionCode() == ExceptionCode.RATE_INVALID)
+                return new ResponseData(Status.FAIL, ExceptionCode.RATE_INVALID, "rate không hợp lệ", null);
         }
         return new ResponseData(Status.SUCCESS, ExceptionCode.SUCCESS, "Tạo đánh giá khoá học thành công", feedBack);
     }
@@ -44,6 +47,7 @@ public class FeedBackController {
         FeedBack feedBackUpdated = null;
         try {
             feedBackUpdated = feedBackService.update(feedBackUpdateInput);
+            feedBackService.updateRateCourse(feedBackUpdated.getCourse().getId());
         } catch (SystemException e) {
             if (e.getExceptionCode() == ExceptionCode.FEED_BACK_NOT_FOUND)
                 return new ResponseData(Status.FAIL, ExceptionCode.REGISTRATION_NOT_FOUND, "Không tìm thấy đánh giá khóa học", null);
@@ -51,6 +55,8 @@ public class FeedBackController {
                 return new ResponseData(Status.FAIL, ExceptionCode.COURSE_NOT_FOUND, "Không tìm thấy khóa học", null);
             if (e.getExceptionCode() == ExceptionCode.USER_NOT_FOUND)
                 return new ResponseData(Status.FAIL, ExceptionCode.USER_NOT_FOUND, "Không tìm thấy học sinh", null);
+            if (e.getExceptionCode() == ExceptionCode.RATE_INVALID)
+                return new ResponseData(Status.FAIL, ExceptionCode.RATE_INVALID, "rate không hợp lệ", null);
         }
         return new ResponseData(Status.SUCCESS, ExceptionCode.SUCCESS, "Cập nhật đánh giá khóa học Thành công", feedBackUpdated);
     }

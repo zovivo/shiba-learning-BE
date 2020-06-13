@@ -63,15 +63,26 @@ public class RegistrationService {
         return registrationRepository.save(registration);
     }
 
-    public Page<Registration> search(int page, int size, Long courseId, Long studentId) {
+    public Page<Registration> search(int page, int size, Long courseId, Long studentId, Boolean active) {
         Pageable pageable = PageRequest.of(page, size);
         if (courseId != null) {
             if (studentId == null)
-                return registrationRepository.findAllByCourse_Id(pageable, courseId);
+                if (active != null)
+                    return registrationRepository.findAllByCourse_IdAndActiveEquals(pageable, courseId, active);
+                else
+                    return registrationRepository.findAllByCourse_Id(pageable, courseId);
+            else if (active != null)
+                return registrationRepository.findAllByUser_IdAndCourse_IdAndActiveEquals(pageable, studentId, courseId, active);
             else
                 return registrationRepository.findAllByUser_IdAndCourse_Id(pageable, studentId, courseId);
+
         } else if (studentId != null)
-            return registrationRepository.findAllByUser_Id(pageable, studentId);
+            if (active != null)
+                return registrationRepository.findAllByUser_IdAndActiveEquals(pageable, studentId, active);
+            else
+                return registrationRepository.findAllByUser_Id(pageable, studentId);
+        else if (active != null)
+            return registrationRepository.findAllByActiveEquals(pageable,active);
         return registrationRepository.findAll(pageable);
     }
 
@@ -88,5 +99,36 @@ public class RegistrationService {
         } catch (EmptyResultDataAccessException e) {
             throw new SystemException(ExceptionCode.REGISTRATION_NOT_FOUND);
         }
+    }
+
+    public Registration activeById(long id) throws SystemException {
+        Registration registration = registrationRepository.findById(id);
+        if (registration == null)
+            throw new SystemException(ExceptionCode.REGISTRATION_NOT_FOUND);
+        registration.setActive(true);
+        return registrationRepository.save(registration);
+    }
+
+    public Registration deactivateById(long id) throws SystemException {
+        Registration registration = registrationRepository.findById(id);
+        if (registration == null)
+            throw new SystemException(ExceptionCode.REGISTRATION_NOT_FOUND);
+        registration.setActive(false);
+        return registrationRepository.save(registration);
+    }
+
+    public Registration addStudentToCourse(RegistrationInput registrationInput) throws SystemException {
+        Course course = courseRepository.findById(registrationInput.getCourseId());
+        if (course == null)
+            throw new SystemException(ExceptionCode.COURSE_NOT_FOUND);
+        User student = userRepository.findFirstByEmail(registrationInput.getStudentEmail());
+        if (student == null || student.getRole().getId() == 1)
+            throw new SystemException(ExceptionCode.USER_NOT_FOUND);
+        if ( registrationRepository.findFirstByUser_IdAndCourse_Id(student.getId(), registrationInput.getCourseId()) != null)
+            throw new SystemException(ExceptionCode.REGISTRATION_EXISTED);
+        Registration registration = new Registration();
+        registration.setCourse(course);
+        registration.setUser(student);
+        return registrationRepository.save(registration);
     }
 }

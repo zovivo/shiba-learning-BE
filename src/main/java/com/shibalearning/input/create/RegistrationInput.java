@@ -12,4 +12,5 @@ import lombok.Setter;
 public class RegistrationInput {
     private long studentId;
     private long courseId;
+    private String studentEmail;
 }
