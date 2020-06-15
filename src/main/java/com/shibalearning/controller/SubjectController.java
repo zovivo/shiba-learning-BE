@@ -25,14 +25,14 @@ public class SubjectController {
             subject = subjectService.create(subjectInput);
         } catch (SystemException e) {
             if (e.getExceptionCode() == ExceptionCode.GRADE_NOT_FOUND)
-                return new ResponseData(Status.FAIL, ExceptionCode.GRADE_NOT_FOUND, "Không tìm thấy khối", null);
+                return new ResponseData(Status.FAIL, ExceptionCode.GRADE_NOT_FOUND, "No grade found", null);
         }
-        return new ResponseData(Status.SUCCESS, ExceptionCode.SUCCESS, "Tạo môn học mới thành công", subject);
+        return new ResponseData(Status.SUCCESS, ExceptionCode.SUCCESS, "Create a new subject successfully", subject);
     }
 
     @GetMapping("search")
     public ResponseData search(@RequestParam int page, @RequestParam int size, @RequestParam(required = false) String name, @RequestParam(required = false) Long grade) {
-        return new ResponseData(Status.SUCCESS, ExceptionCode.SUCCESS, "Thành công", subjectService.search(page, size, name, grade));
+        return new ResponseData(Status.SUCCESS, ExceptionCode.SUCCESS, "Success", subjectService.search(page, size, name, grade));
     }
 
     @GetMapping("get-by-id")
@@ -41,9 +41,9 @@ public class SubjectController {
         try {
             subject = subjectService.getById(id);
         } catch (SystemException e) {
-            return new ResponseData(Status.FAIL, ExceptionCode.SUBJECT_NOT_FOUND, "Không tìm thấy môn học", null);
+            return new ResponseData(Status.FAIL, ExceptionCode.SUBJECT_NOT_FOUND, "No subject found", null);
         }
-        return new ResponseData(Status.SUCCESS, ExceptionCode.SUCCESS, "Thành công", subject);
+        return new ResponseData(Status.SUCCESS, ExceptionCode.SUCCESS, "Success", subject);
     }
 
     @PostMapping("delete-by-id")
@@ -51,9 +51,9 @@ public class SubjectController {
         try {
             subjectService.deleteById(subjectUpdateInput.getId());
         } catch (SystemException e) {
-            return new ResponseData(Status.FAIL, ExceptionCode.SUBJECT_NOT_FOUND, "Không tìm thấy môn học", null);
+            return new ResponseData(Status.FAIL, ExceptionCode.SUBJECT_NOT_FOUND, "No subject found", null);
         }
-        return new ResponseData(Status.SUCCESS, ExceptionCode.SUCCESS, "Xóa môn học thành công", "ID: " + subjectUpdateInput.getId());
+        return new ResponseData(Status.SUCCESS, ExceptionCode.SUCCESS, "Successfully deleted the subject", "ID: " + subjectUpdateInput.getId());
     }
 
     @PostMapping("update")
@@ -63,11 +63,11 @@ public class SubjectController {
             subject = subjectService.update(subjectUpdateInput);
         } catch (SystemException e) {
             if (e.getExceptionCode() == ExceptionCode.GRADE_NOT_FOUND)
-                return new ResponseData(Status.FAIL, ExceptionCode.GRADE_NOT_FOUND, "Không tìm thấy khối", null);
+                return new ResponseData(Status.FAIL, ExceptionCode.GRADE_NOT_FOUND, "No grade found", null);
             if (e.getExceptionCode() == ExceptionCode.SUBJECT_NOT_FOUND)
-                return new ResponseData(Status.FAIL, ExceptionCode.SUBJECT_NOT_FOUND, "Không tìm thấy môn học", null);
+                return new ResponseData(Status.FAIL, ExceptionCode.SUBJECT_NOT_FOUND, "No subject found", null);
         }
-        return new ResponseData(Status.SUCCESS, ExceptionCode.SUCCESS, "Cập nhật môn học thành công", subject);
+        return new ResponseData(Status.SUCCESS, ExceptionCode.SUCCESS, "Update subject successfully", subject);
     }
 
 }

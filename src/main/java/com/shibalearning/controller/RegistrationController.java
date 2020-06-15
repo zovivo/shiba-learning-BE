@@ -9,6 +9,7 @@ import com.shibalearning.input.create.RegistrationInput;
 import com.shibalearning.input.update.RegistrationUpdateInput;
 import com.shibalearning.service.RegistrationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -26,18 +27,27 @@ public class RegistrationController {
             registration = registrationService.create(registrationInput);
         } catch (SystemException e) {
             if (e.getExceptionCode() == ExceptionCode.COURSE_NOT_FOUND)
-                return new ResponseData(Status.FAIL, ExceptionCode.COURSE_NOT_FOUND, "Không tìm thấy khóa học", null);
+                return new ResponseData(Status.FAIL, ExceptionCode.COURSE_NOT_FOUND, "No courses found", null);
             if (e.getExceptionCode() == ExceptionCode.USER_NOT_FOUND)
-                return new ResponseData(Status.FAIL, ExceptionCode.USER_NOT_FOUND, "Không tìm thấy học sinh", null);
+                return new ResponseData(Status.FAIL, ExceptionCode.USER_NOT_FOUND, "No student found", null);
             if (e.getExceptionCode() == ExceptionCode.REGISTRATION_EXISTED)
-                return new ResponseData(Status.FAIL, ExceptionCode.REGISTRATION_EXISTED, "Học sinh đã đăng ký khóa học này rồi", null);
+                return new ResponseData(Status.FAIL, ExceptionCode.REGISTRATION_EXISTED, "Students have already signed up for this course", null);
         }
-        return new ResponseData(Status.SUCCESS, ExceptionCode.SUCCESS, "Đăng ký khoá học thành công", registration);
+        return new ResponseData(Status.SUCCESS, ExceptionCode.SUCCESS, "Sign up for the course successfully", registration);
     }
 
     @GetMapping("search")
-    public ResponseData search(@RequestParam int page, @RequestParam int size, @RequestParam(required = false) Long studentId, @RequestParam(required = false) Long courseId, @RequestParam(required = false) Boolean active) {
-        return new ResponseData(Status.SUCCESS, ExceptionCode.SUCCESS, "Thành công", registrationService.search(page, size, courseId, studentId, active));
+    public ResponseData search(@RequestParam int page, @RequestParam int size, @RequestParam(required = false) Long studentId, @RequestParam(required = false) Long courseId, @RequestParam(required = false) Boolean active, @RequestParam(required = false) String userName) {
+        if (userName != null){
+            try {
+                Page<Registration> registrationPage = registrationService.searchWithUserNameStudent(page, size, courseId, userName, active);
+                return new ResponseData(Status.SUCCESS, ExceptionCode.SUCCESS, "Success", registrationPage);
+            } catch (SystemException e) {
+                if (e.getExceptionCode() == ExceptionCode.USER_NOT_FOUND)
+                    return new ResponseData(Status.FAIL, ExceptionCode.USER_NOT_FOUND, "No student found", null);
+            }
+        }
+        return new ResponseData(Status.SUCCESS, ExceptionCode.SUCCESS, "Success", registrationService.search(page, size, courseId, studentId, active));
     }
 
     @PostMapping("update")
@@ -47,13 +57,13 @@ public class RegistrationController {
             registrationUpdated = registrationService.update(registrationUpdateInput);
         } catch (SystemException e) {
             if (e.getExceptionCode() == ExceptionCode.REGISTRATION_NOT_FOUND)
-                return new ResponseData(Status.FAIL, ExceptionCode.REGISTRATION_NOT_FOUND, "Không tìm thấy đăng ký khóa học", null);
+                return new ResponseData(Status.FAIL, ExceptionCode.REGISTRATION_NOT_FOUND, "Course registration not found", null);
             if (e.getExceptionCode() == ExceptionCode.COURSE_NOT_FOUND)
-                return new ResponseData(Status.FAIL, ExceptionCode.COURSE_NOT_FOUND, "Không tìm thấy khóa học", null);
+                return new ResponseData(Status.FAIL, ExceptionCode.COURSE_NOT_FOUND, "No courses found", null);
             if (e.getExceptionCode() == ExceptionCode.USER_NOT_FOUND)
-                return new ResponseData(Status.FAIL, ExceptionCode.USER_NOT_FOUND, "Không tìm thấy học sinh", null);
+                return new ResponseData(Status.FAIL, ExceptionCode.USER_NOT_FOUND, "No student found", null);
         }
-        return new ResponseData(Status.SUCCESS, ExceptionCode.SUCCESS, "Cập nhật đăng ký khóa học Thành công", registrationUpdated);
+        return new ResponseData(Status.SUCCESS, ExceptionCode.SUCCESS, "Update registration for the Course Successfully", registrationUpdated);
     }
 
     @PostMapping("delete-by-id")
@@ -61,9 +71,9 @@ public class RegistrationController {
         try {
             registrationService.deleteById(registrationUpdateInput.getId());
         } catch (SystemException e) {
-            return new ResponseData(Status.FAIL, ExceptionCode.REGISTRATION_NOT_FOUND, "Không tìm thấy đăng ký khoá học", null);
+            return new ResponseData(Status.FAIL, ExceptionCode.REGISTRATION_NOT_FOUND, "Course registration not found", null);
         }
-        return new ResponseData(Status.SUCCESS, ExceptionCode.SUCCESS, "Xóa đăng ký khóa học thành công", "ID: " + registrationUpdateInput.getId());
+        return new ResponseData(Status.SUCCESS, ExceptionCode.SUCCESS, "Successfully deleted course registration", "ID: " + registrationUpdateInput.getId());
     }
 
     @GetMapping("get-by-id")
@@ -72,9 +82,9 @@ public class RegistrationController {
         try {
             registration = registrationService.getById(id);
         } catch (SystemException e) {
-            return new ResponseData(Status.FAIL, ExceptionCode.REGISTRATION_NOT_FOUND, "Không tìm thấy đăng ký khoá học", null);
+            return new ResponseData(Status.FAIL, ExceptionCode.REGISTRATION_NOT_FOUND, "Course registration not found", null);
         }
-        return new ResponseData(Status.SUCCESS, ExceptionCode.SUCCESS, "Thành công", registration);
+        return new ResponseData(Status.SUCCESS, ExceptionCode.SUCCESS, "Success", registration);
     }
 
     @PostMapping("active-by-id")
@@ -83,9 +93,9 @@ public class RegistrationController {
         try {
             registration = registrationService.activeById(registrationUpdateInput.getId());
         } catch (SystemException e) {
-            return new ResponseData(Status.FAIL, ExceptionCode.REGISTRATION_NOT_FOUND, "Không tìm thấy đăng ký khoá học", null);
+            return new ResponseData(Status.FAIL, ExceptionCode.REGISTRATION_NOT_FOUND, "Course registration not found", null);
         }
-        return new ResponseData(Status.SUCCESS, ExceptionCode.SUCCESS, "Active Thành công", registration);
+        return new ResponseData(Status.SUCCESS, ExceptionCode.SUCCESS, "Successful activation", registration);
     }
 
     @PostMapping("inactive-by-id")
@@ -94,9 +104,9 @@ public class RegistrationController {
         try {
             registration = registrationService.deactivateById(registrationUpdateInput.getId());
         } catch (SystemException e) {
-            return new ResponseData(Status.FAIL, ExceptionCode.REGISTRATION_NOT_FOUND, "Không tìm thấy đăng ký khoá học", null);
+            return new ResponseData(Status.FAIL, ExceptionCode.REGISTRATION_NOT_FOUND, "Course registration not found", null);
         }
-        return new ResponseData(Status.SUCCESS, ExceptionCode.SUCCESS, "Deactivate Thành công", registration);
+        return new ResponseData(Status.SUCCESS, ExceptionCode.SUCCESS, "Deactivated successfully", registration);
     }
 
     @PostMapping("add-student-to-course")
@@ -106,12 +116,12 @@ public class RegistrationController {
             registration = registrationService.addStudentToCourse(registrationInput);
         } catch (SystemException e) {
             if (e.getExceptionCode() == ExceptionCode.COURSE_NOT_FOUND)
-                return new ResponseData(Status.FAIL, ExceptionCode.COURSE_NOT_FOUND, "Không tìm thấy khóa học", null);
+                return new ResponseData(Status.FAIL, ExceptionCode.COURSE_NOT_FOUND, "No courses found", null);
             if (e.getExceptionCode() == ExceptionCode.USER_NOT_FOUND)
-                return new ResponseData(Status.FAIL, ExceptionCode.USER_NOT_FOUND, "Không tìm thấy học sinh", null);
+                return new ResponseData(Status.FAIL, ExceptionCode.USER_NOT_FOUND, "No student found", null);
             if (e.getExceptionCode() == ExceptionCode.REGISTRATION_EXISTED)
-                return new ResponseData(Status.FAIL, ExceptionCode.REGISTRATION_EXISTED, "Học sinh đã đăng ký khóa học này rồi", null);
+                return new ResponseData(Status.FAIL, ExceptionCode.REGISTRATION_EXISTED, "Students have already signed up for this course", null);
         }
-        return new ResponseData(Status.SUCCESS, ExceptionCode.SUCCESS, "Đăng ký khoá học thành công", registration);
+        return new ResponseData(Status.SUCCESS, ExceptionCode.SUCCESS, "Sign up for the course successfully", registration);
     }
 }

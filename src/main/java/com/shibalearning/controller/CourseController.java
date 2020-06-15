@@ -25,16 +25,16 @@ public class CourseController {
             course = courseService.create(courseInput);
         } catch (SystemException e) {
             if (e.getExceptionCode() == ExceptionCode.SUBJECT_NOT_FOUND)
-                return new ResponseData(Status.FAIL, ExceptionCode.SUBJECT_NOT_FOUND, "Không tìm thấy môn học", null);
+                return new ResponseData(Status.FAIL, ExceptionCode.SUBJECT_NOT_FOUND, "No subject found", null);
             if (e.getExceptionCode() == ExceptionCode.USER_NOT_FOUND)
-                return new ResponseData(Status.FAIL, ExceptionCode.USER_NOT_FOUND, "Không tìm thấy giáo viên", null);
+                return new ResponseData(Status.FAIL, ExceptionCode.USER_NOT_FOUND, "No teacher found", null);
         }
-        return new ResponseData(Status.SUCCESS, ExceptionCode.SUCCESS, "Tạo khoá học mới thành công", course);
+        return new ResponseData(Status.SUCCESS, ExceptionCode.SUCCESS, "Create a new course successfully", course);
     }
 
     @GetMapping("search")
     public ResponseData search(@RequestParam int page, @RequestParam int size, @RequestParam(required = false) String name, @RequestParam(required = false) Long subjectId) {
-        return new ResponseData(Status.SUCCESS, ExceptionCode.SUCCESS, "Thành công", courseService.search(page, size, name, subjectId));
+        return new ResponseData(Status.SUCCESS, ExceptionCode.SUCCESS, "Success", courseService.search(page, size, name, subjectId));
     }
 
     @PostMapping("update")
@@ -44,13 +44,13 @@ public class CourseController {
             courseUpdated = courseService.update(courseUpdateInput);
         } catch (SystemException e) {
             if (e.getExceptionCode() == ExceptionCode.SUBJECT_NOT_FOUND)
-                return new ResponseData(Status.FAIL, ExceptionCode.SUBJECT_NOT_FOUND, "Không tìm thấy môn học", null);
+                return new ResponseData(Status.FAIL, ExceptionCode.SUBJECT_NOT_FOUND, "No subject found", null);
             if (e.getExceptionCode() == ExceptionCode.COURSE_NOT_FOUND)
-                return new ResponseData(Status.FAIL, ExceptionCode.COURSE_NOT_FOUND, "Không tìm thấy khóa học", null);
+                return new ResponseData(Status.FAIL, ExceptionCode.COURSE_NOT_FOUND, "No courses found", null);
             if (e.getExceptionCode() == ExceptionCode.USER_NOT_FOUND)
-                return new ResponseData(Status.FAIL, ExceptionCode.USER_NOT_FOUND, "Không tìm thấy giáo viên", null);
+                return new ResponseData(Status.FAIL, ExceptionCode.USER_NOT_FOUND, "No teacher found", null);
         }
-        return new ResponseData(Status.SUCCESS, ExceptionCode.SUCCESS, "Cập nhật khóa học Thành công", courseUpdated);
+        return new ResponseData(Status.SUCCESS, ExceptionCode.SUCCESS, "Course update Successfully", courseUpdated);
     }
 
     @PostMapping("delete-by-id")
@@ -58,9 +58,9 @@ public class CourseController {
         try {
             courseService.deleteById(courseUpdateInput.getId());
         } catch (SystemException e) {
-            return new ResponseData(Status.FAIL, ExceptionCode.COURSE_NOT_FOUND, "Không tìm thấy khoá học", null);
+            return new ResponseData(Status.FAIL, ExceptionCode.COURSE_NOT_FOUND, "Course not found", null);
         }
-        return new ResponseData(Status.SUCCESS, ExceptionCode.SUCCESS, "Xóa khóa học thành công", "ID: " + courseUpdateInput.getId());
+        return new ResponseData(Status.SUCCESS, ExceptionCode.SUCCESS, "Course successfully deleted", "ID: " + courseUpdateInput.getId());
     }
 
     @GetMapping("get-by-id")
@@ -69,8 +69,8 @@ public class CourseController {
         try {
             course = courseService.getById(id);
         } catch (SystemException e) {
-            return new ResponseData(Status.FAIL, ExceptionCode.COURSE_NOT_FOUND, "Không tìm thấy khoá học", null);
+            return new ResponseData(Status.FAIL, ExceptionCode.COURSE_NOT_FOUND, "Course not found", null);
         }
-        return new ResponseData(Status.SUCCESS, ExceptionCode.SUCCESS, "Thành công", course);
+        return new ResponseData(Status.SUCCESS, ExceptionCode.SUCCESS, "Success", course);
     }
 }

@@ -86,6 +86,13 @@ public class RegistrationService {
         return registrationRepository.findAll(pageable);
     }
 
+    public Page<Registration> searchWithUserNameStudent(int page, int size, Long courseId, String userNameStudent, Boolean active) throws SystemException {
+        User student = userRepository.findFirstByUserName(userNameStudent);
+        if (student == null || student.getRole().getId() != 2)
+            throw new SystemException(ExceptionCode.USER_NOT_FOUND);
+        return search(page, size, courseId, student.getId(), active);
+    }
+
     public Registration getById(long id) throws SystemException {
         Registration registration = registrationRepository.findById(id);
         if (registration == null)

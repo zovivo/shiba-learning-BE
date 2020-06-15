@@ -34,8 +34,8 @@ public class UserController {
     public ResponseData login(@RequestBody UserLoginInput userLoginInput){
         User user = userService.login(userLoginInput);
         if (user == null)
-            return new ResponseData(Status.FAIL, ExceptionCode.FAIL,"Tên tài khoản hoặc mật khẩu không đúng",null);
-        return new ResponseData(Status.SUCCESS, ExceptionCode.SUCCESS,"Đăng nhập thành công",user);
+            return new ResponseData(Status.FAIL, ExceptionCode.FAIL,"The username or password is incorrect",null);
+        return new ResponseData(Status.SUCCESS, ExceptionCode.SUCCESS,"Logged in successfully",user);
     }
 
     @PostMapping("create")
@@ -45,13 +45,13 @@ public class UserController {
             user = userService.create(userInput);
         } catch (SystemException e) {
             if (e.getExceptionCode() == ExceptionCode.USER_NAME_EXIST) {
-                return new ResponseData(Status.FAIL, ExceptionCode.USER_NAME_EXIST,"userName đã tồn tại",null);
+                return new ResponseData(Status.FAIL, ExceptionCode.USER_NAME_EXIST,"userName already exists",null);
             }
             if (e.getExceptionCode() == ExceptionCode.EMAIL_EXIST) {
-                return new ResponseData(Status.FAIL, ExceptionCode.EMAIL_EXIST,"email đã tồn tại",null);
+                return new ResponseData(Status.FAIL, ExceptionCode.EMAIL_EXIST,"Email already exists",null);
             }
         }
-        return new ResponseData(Status.SUCCESS,ExceptionCode.SUCCESS ,"Tạo tài khoản thành công",user);
+        return new ResponseData(Status.SUCCESS,ExceptionCode.SUCCESS ,"Account successfully created",user);
     }
 
     @PostMapping("update")
@@ -61,17 +61,17 @@ public class UserController {
             user = userService.updateProfile(userUpdateInput);
         } catch (SystemException e) {
             if (e.getExceptionCode() == ExceptionCode.USER_NOT_FOUND)
-                return new ResponseData(Status.FAIL, ExceptionCode.USER_NOT_FOUND,"Không tìm thấy user",null);
+                return new ResponseData(Status.FAIL, ExceptionCode.USER_NOT_FOUND,"No user found",null);
         }
-        return new ResponseData(Status.SUCCESS,ExceptionCode.SUCCESS,"Cập nhật thông tài khoản thành công",user);
+        return new ResponseData(Status.SUCCESS,ExceptionCode.SUCCESS,"Update account information successfully",user);
     }
 
     @PostMapping("change-password")
     public ResponseData changePassword(@RequestBody UserUpdateInput userUpdateInput){
         User user = userService.changePassword(userUpdateInput);
         if (user == null)
-            return new ResponseData(Status.FAIL,ExceptionCode.USER_NOT_FOUND ,"Không tìm thấy user hoặc sai mật khẩu",null);
-        return new ResponseData(Status.SUCCESS, ExceptionCode.SUCCESS,"Đổi mật khẩu thành công",user);
+            return new ResponseData(Status.FAIL,ExceptionCode.USER_NOT_FOUND ,"No user found or wrong password",null);
+        return new ResponseData(Status.SUCCESS, ExceptionCode.SUCCESS,"Change password successfully",user);
     }
 
     @PostMapping("upload")
@@ -81,14 +81,14 @@ public class UserController {
 
     @GetMapping("search")
     public ResponseData search(@RequestParam int page, @RequestParam int size, @RequestParam(required = false) String userName,  @RequestParam(required = false) String email, @RequestParam(required = false) String sortBy){
-        return new ResponseData(Status.SUCCESS, ExceptionCode.SUCCESS,"Thành công",userService.search(page, size,userName,email,sortBy));
+        return new ResponseData(Status.SUCCESS, ExceptionCode.SUCCESS,"Success",userService.search(page, size,userName,email,sortBy));
     }
 
     @GetMapping("get-by-username")
     public ResponseData search(@RequestParam String userName){
         User user = userService.getByUserName(userName);
         if (user == null)
-            return new ResponseData(Status.SUCCESS, ExceptionCode.SUCCESS,"Không tìm thấy user",user);
-        return new ResponseData(Status.SUCCESS, ExceptionCode.SUCCESS,"Thành công",user);
+            return new ResponseData(Status.SUCCESS, ExceptionCode.SUCCESS,"No user found",user);
+        return new ResponseData(Status.SUCCESS, ExceptionCode.SUCCESS,"Success",user);
     }
 }

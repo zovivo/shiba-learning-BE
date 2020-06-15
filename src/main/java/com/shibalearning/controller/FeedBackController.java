@@ -26,20 +26,20 @@ public class FeedBackController {
             feedBackService.updateRateCourse(feedBack.getCourse().getId());
         } catch (SystemException e) {
             if (e.getExceptionCode() == ExceptionCode.COURSE_NOT_FOUND)
-                return new ResponseData(Status.FAIL, ExceptionCode.COURSE_NOT_FOUND, "Không tìm thấy khóa học", null);
+                return new ResponseData(Status.FAIL, ExceptionCode.COURSE_NOT_FOUND, "No courses found", null);
             if (e.getExceptionCode() == ExceptionCode.USER_NOT_FOUND)
-                return new ResponseData(Status.FAIL, ExceptionCode.USER_NOT_FOUND, "Không tìm thấy học sinh", null);
+                return new ResponseData(Status.FAIL, ExceptionCode.USER_NOT_FOUND, "No student found", null);
             if (e.getExceptionCode() == ExceptionCode.FEEDBACK_EXISTED)
-                return new ResponseData(Status.FAIL, ExceptionCode.FEEDBACK_EXISTED, "Học sinh đã đánh giá khóa học này rồi", null);
+                return new ResponseData(Status.FAIL, ExceptionCode.FEEDBACK_EXISTED, "Students have already assessed this course", null);
             if (e.getExceptionCode() == ExceptionCode.RATE_INVALID)
-                return new ResponseData(Status.FAIL, ExceptionCode.RATE_INVALID, "rate không hợp lệ", null);
+                return new ResponseData(Status.FAIL, ExceptionCode.RATE_INVALID, "Invalid rate", null);
         }
-        return new ResponseData(Status.SUCCESS, ExceptionCode.SUCCESS, "Tạo đánh giá khoá học thành công", feedBack);
+        return new ResponseData(Status.SUCCESS, ExceptionCode.SUCCESS, "Create successful course reviews", feedBack);
     }
 
     @GetMapping("search")
     public ResponseData search(@RequestParam int page, @RequestParam int size, @RequestParam(required = false) Long studentId, @RequestParam(required = false) Long courseId) {
-        return new ResponseData(Status.SUCCESS, ExceptionCode.SUCCESS, "Thành công", feedBackService.search(page, size, courseId, studentId));
+        return new ResponseData(Status.SUCCESS, ExceptionCode.SUCCESS, "Success", feedBackService.search(page, size, courseId, studentId));
     }
 
     @PostMapping("update")
@@ -50,15 +50,15 @@ public class FeedBackController {
             feedBackService.updateRateCourse(feedBackUpdated.getCourse().getId());
         } catch (SystemException e) {
             if (e.getExceptionCode() == ExceptionCode.FEED_BACK_NOT_FOUND)
-                return new ResponseData(Status.FAIL, ExceptionCode.REGISTRATION_NOT_FOUND, "Không tìm thấy đánh giá khóa học", null);
+                return new ResponseData(Status.FAIL, ExceptionCode.REGISTRATION_NOT_FOUND, "No course reviews found", null);
             if (e.getExceptionCode() == ExceptionCode.COURSE_NOT_FOUND)
-                return new ResponseData(Status.FAIL, ExceptionCode.COURSE_NOT_FOUND, "Không tìm thấy khóa học", null);
+                return new ResponseData(Status.FAIL, ExceptionCode.COURSE_NOT_FOUND, "No courses found", null);
             if (e.getExceptionCode() == ExceptionCode.USER_NOT_FOUND)
-                return new ResponseData(Status.FAIL, ExceptionCode.USER_NOT_FOUND, "Không tìm thấy học sinh", null);
+                return new ResponseData(Status.FAIL, ExceptionCode.USER_NOT_FOUND, "No student found", null);
             if (e.getExceptionCode() == ExceptionCode.RATE_INVALID)
-                return new ResponseData(Status.FAIL, ExceptionCode.RATE_INVALID, "rate không hợp lệ", null);
+                return new ResponseData(Status.FAIL, ExceptionCode.RATE_INVALID, "Invalid rate", null);
         }
-        return new ResponseData(Status.SUCCESS, ExceptionCode.SUCCESS, "Cập nhật đánh giá khóa học Thành công", feedBackUpdated);
+        return new ResponseData(Status.SUCCESS, ExceptionCode.SUCCESS, "Update course evaluation Successfully", feedBackUpdated);
     }
 
     @PostMapping("delete-by-id")
@@ -66,9 +66,9 @@ public class FeedBackController {
         try {
             feedBackService.deleteById(feedBackUpdateInput.getId());
         } catch (SystemException e) {
-            return new ResponseData(Status.FAIL, ExceptionCode.FEED_BACK_NOT_FOUND, "Không tìm thấy đánh giá khoá học", null);
+            return new ResponseData(Status.FAIL, ExceptionCode.FEED_BACK_NOT_FOUND, "No course reviews found", null);
         }
-        return new ResponseData(Status.SUCCESS, ExceptionCode.SUCCESS, "Xóa đánh giá khóa học thành công", "ID: " + feedBackUpdateInput.getId());
+        return new ResponseData(Status.SUCCESS, ExceptionCode.SUCCESS, "Successfully deleted the course review", "ID: " + feedBackUpdateInput.getId());
     }
 
     @GetMapping("get-by-id")
@@ -77,8 +77,8 @@ public class FeedBackController {
         try {
             feedBack = feedBackService.getById(id);
         } catch (SystemException e) {
-            return new ResponseData(Status.FAIL, ExceptionCode.FEED_BACK_NOT_FOUND, "Không tìm thấy đánh giá khoá học", null);
+            return new ResponseData(Status.FAIL, ExceptionCode.FEED_BACK_NOT_FOUND, "No course reviews found", null);
         }
-        return new ResponseData(Status.SUCCESS, ExceptionCode.SUCCESS, "Thành công", feedBack);
+        return new ResponseData(Status.SUCCESS, ExceptionCode.SUCCESS, "Success", feedBack);
     }
 }

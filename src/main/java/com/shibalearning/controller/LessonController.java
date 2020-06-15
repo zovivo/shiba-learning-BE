@@ -25,14 +25,14 @@ public class LessonController {
             lesson = lessonService.create(lessonInput);
         } catch (SystemException e) {
             if (e.getExceptionCode() == ExceptionCode.COURSE_NOT_FOUND)
-                return new ResponseData(Status.FAIL, ExceptionCode.COURSE_NOT_FOUND, "Không tìm thấy khóa học", null);
+                return new ResponseData(Status.FAIL, ExceptionCode.COURSE_NOT_FOUND, "No courses found", null);
         }
-        return new ResponseData(Status.SUCCESS, ExceptionCode.SUCCESS, "Tạo bài học mới thành công", lesson);
+        return new ResponseData(Status.SUCCESS, ExceptionCode.SUCCESS, "Create a new lesson successfully", lesson);
     }
 
     @GetMapping("search")
     public ResponseData search(@RequestParam int page, @RequestParam int size, @RequestParam(required = false) String title, @RequestParam(required = false) Long courseId) {
-        return new ResponseData(Status.SUCCESS, ExceptionCode.SUCCESS, "Thành công", lessonService.search(page, size, title, courseId));
+        return new ResponseData(Status.SUCCESS, ExceptionCode.SUCCESS, "Success", lessonService.search(page, size, title, courseId));
     }
 
     @PostMapping("update")
@@ -42,11 +42,11 @@ public class LessonController {
             lessonUpdated = lessonService.update(lessonUpdateInput);
         } catch (SystemException e) {
             if (e.getExceptionCode() == ExceptionCode.LESSON_NOT_FOUND)
-                return new ResponseData(Status.FAIL, ExceptionCode.LESSON_NOT_FOUND, "Không tìm thấy bài học", null);
+                return new ResponseData(Status.FAIL, ExceptionCode.LESSON_NOT_FOUND, "No lesson found", null);
             if (e.getExceptionCode() == ExceptionCode.COURSE_NOT_FOUND)
-                return new ResponseData(Status.FAIL, ExceptionCode.COURSE_NOT_FOUND, "Không tìm thấy khóa học", null);
+                return new ResponseData(Status.FAIL, ExceptionCode.COURSE_NOT_FOUND, "No courses found", null);
         }
-        return new ResponseData(Status.SUCCESS, ExceptionCode.SUCCESS, "Cập nhật bài học Thành công", lessonUpdated);
+        return new ResponseData(Status.SUCCESS, ExceptionCode.SUCCESS, "Updated lesson Successfully", lessonUpdated);
     }
 
     @PostMapping("delete-by-id")
@@ -54,9 +54,9 @@ public class LessonController {
         try {
             lessonService.deleteById(lessonUpdateInput.getId());
         } catch (SystemException e) {
-            return new ResponseData(Status.FAIL, ExceptionCode.LESSON_NOT_FOUND, "Không tìm thấy bài học", null);
+            return new ResponseData(Status.FAIL, ExceptionCode.LESSON_NOT_FOUND, "No lesson found", null);
         }
-        return new ResponseData(Status.SUCCESS, ExceptionCode.SUCCESS, "Xóa bài học thành công", "ID: " + lessonUpdateInput.getId());
+        return new ResponseData(Status.SUCCESS, ExceptionCode.SUCCESS, "Successfully deleted the lesson", "ID: " + lessonUpdateInput.getId());
     }
 
     @GetMapping("get-by-id")
@@ -65,8 +65,8 @@ public class LessonController {
         try {
             lesson = lessonService.getById(id);
         } catch (SystemException e) {
-            return new ResponseData(Status.FAIL, ExceptionCode.LESSON_NOT_FOUND, "Không tìm thấy bài học", null);
+            return new ResponseData(Status.FAIL, ExceptionCode.LESSON_NOT_FOUND, "No lesson found", null);
         }
-        return new ResponseData(Status.SUCCESS, ExceptionCode.SUCCESS, "Thành công", lesson);
+        return new ResponseData(Status.SUCCESS, ExceptionCode.SUCCESS, "Success", lesson);
     }
 }

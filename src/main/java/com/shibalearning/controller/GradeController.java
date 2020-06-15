@@ -20,13 +20,13 @@ public class GradeController {
     public ResponseData create(@RequestBody GradeInput gradeInput) {
         Grade grade = gradeService.create(gradeInput);
         if (grade == null)
-            return new ResponseData(Status.FAIL, ExceptionCode.FAIL, "Khối đã tồn tại", null);
-        return new ResponseData(Status.SUCCESS, ExceptionCode.SUCCESS, "Tạo khối mới thành công", grade);
+            return new ResponseData(Status.FAIL, ExceptionCode.FAIL, "Grade already exists\n", null);
+        return new ResponseData(Status.SUCCESS, ExceptionCode.SUCCESS, "Create a new grade successfully\n", grade);
     }
 
     @GetMapping("search")
     public ResponseData search(@RequestParam int page, @RequestParam int size) {
-        return new ResponseData(Status.SUCCESS, ExceptionCode.SUCCESS, "Thành công", gradeService.search(page, size));
+        return new ResponseData(Status.SUCCESS, ExceptionCode.SUCCESS, "Success", gradeService.search(page, size));
     }
 
 }
