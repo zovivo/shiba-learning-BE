@@ -29,8 +29,8 @@ public class FeedBackController {
                 return new ResponseData(Status.FAIL, ExceptionCode.COURSE_NOT_FOUND, "No courses found", null);
             if (e.getExceptionCode() == ExceptionCode.USER_NOT_FOUND)
                 return new ResponseData(Status.FAIL, ExceptionCode.USER_NOT_FOUND, "No student found", null);
-            if (e.getExceptionCode() == ExceptionCode.FEEDBACK_EXISTED)
-                return new ResponseData(Status.FAIL, ExceptionCode.FEEDBACK_EXISTED, "Students have already assessed this course", null);
+//            if (e.getExceptionCode() == ExceptionCode.FEEDBACK_EXISTED)
+//                return new ResponseData(Status.FAIL, ExceptionCode.FEEDBACK_EXISTED, "Students have already assessed this course", null);
             if (e.getExceptionCode() == ExceptionCode.RATE_INVALID)
                 return new ResponseData(Status.FAIL, ExceptionCode.RATE_INVALID, "Invalid rate", null);
         }

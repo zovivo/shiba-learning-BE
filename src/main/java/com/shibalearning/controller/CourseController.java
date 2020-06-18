@@ -37,6 +37,11 @@ public class CourseController {
         return new ResponseData(Status.SUCCESS, ExceptionCode.SUCCESS, "Success", courseService.search(page, size, name, subjectId));
     }
 
+    @GetMapping("get-all")
+    public ResponseData getAll(@RequestParam(required = false) Long teacherId) {
+        return new ResponseData(Status.SUCCESS, ExceptionCode.SUCCESS, "Success", courseService.getByTeacher(teacherId));
+    }
+
     @PostMapping("update")
     public ResponseData update(@ModelAttribute CourseUpdateInput courseUpdateInput) {
         Course courseUpdated = null;

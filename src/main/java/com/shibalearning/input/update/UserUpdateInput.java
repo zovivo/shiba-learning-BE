@@ -17,4 +17,5 @@ public class UserUpdateInput {
     private String newPassword;
     private String newEmail;
     private MultipartFile newAvatar;
+    private long id;
 }

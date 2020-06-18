@@ -17,6 +17,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class RegistrationService {
 
@@ -93,6 +95,11 @@ public class RegistrationService {
         return search(page, size, courseId, student.getId(), active);
     }
 
+    public Page<Registration> searchByUserNameStudent(int page, int size, String userNameStudent){
+        Pageable pageable = PageRequest.of(page, size);
+        return registrationRepository.findAllByUser_UserNameContaining(pageable,userNameStudent);
+    }
+
     public Registration getById(long id) throws SystemException {
         Registration registration = registrationRepository.findById(id);
         if (registration == null)
@@ -137,5 +144,32 @@ public class RegistrationService {
         registration.setCourse(course);
         registration.setUser(student);
         return registrationRepository.save(registration);
+    }
+
+    public Registration addPoint(RegistrationInput registrationInput) throws SystemException {
+        Course course = courseRepository.findById(registrationInput.getCourseId());
+        if (course == null)
+            throw new SystemException(ExceptionCode.COURSE_NOT_FOUND);
+        User student = userRepository.findById(registrationInput.getStudentId());
+        if (student == null || student.getRole().getId() == 1)
+            throw new SystemException(ExceptionCode.USER_NOT_FOUND);
+        Registration registration = registrationRepository.findFirstByUser_IdAndCourse_Id(student.getId(), registrationInput.getCourseId());
+        if (registration == null)
+            throw new SystemException(ExceptionCode.REGISTRATION_NOT_FOUND);
+        registration.setPoint(registrationInput.getPoint());
+        return registrationRepository.save(registration);
+    }
+
+    public Page<Registration> searchByTeacher(int page, int size, long teacherId, String studentName) throws SystemException {
+        Pageable pageable = PageRequest.of(page, size);
+        User teacher = userRepository.findById(teacherId);
+        if (teacher == null || teacher.getRole().getId() != 1)
+            throw new SystemException(ExceptionCode.USER_NOT_FOUND);
+        List<Course> courses = courseRepository.findAllByTeacher_Id(teacherId);
+        if (courses == null || courses.isEmpty())
+            throw new SystemException(ExceptionCode.COURSE_NOT_FOUND);
+        if (studentName != null)
+            return registrationRepository.findAllByCourseInAndUser_UserNameContaining(pageable, courses, studentName);
+        return registrationRepository.findAllByCourseIn(pageable, courses);
     }
 }

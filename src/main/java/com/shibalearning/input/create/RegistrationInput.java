@@ -13,4 +13,5 @@ public class RegistrationInput {
     private long studentId;
     private long courseId;
     private String studentEmail;
+    private double point;
 }

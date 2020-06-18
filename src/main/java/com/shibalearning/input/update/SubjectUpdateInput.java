@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.web.multipart.MultipartFile;
 
 @Getter
 @Setter
@@ -15,4 +16,5 @@ public class SubjectUpdateInput {
     private String newName;
     private String newDescription;
     private long newGrade;
+    private MultipartFile newImage;
 }

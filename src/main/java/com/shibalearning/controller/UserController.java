@@ -91,4 +91,19 @@ public class UserController {
             return new ResponseData(Status.SUCCESS, ExceptionCode.SUCCESS,"No user found",user);
         return new ResponseData(Status.SUCCESS, ExceptionCode.SUCCESS,"Success",user);
     }
+
+    @GetMapping("get-all-teacher")
+    public ResponseData getAllTeacher(){
+        return new ResponseData(Status.SUCCESS, ExceptionCode.SUCCESS,"Success",userService.getAllTeacher());
+    }
+
+    @PostMapping("delete-by-id")
+    public ResponseData deleteById(@RequestBody UserUpdateInput userUpdateInput){
+        try {
+            userService.deleteById(userUpdateInput.getId());
+        } catch (SystemException e) {
+            return new ResponseData(Status.FAIL, ExceptionCode.COURSE_NOT_FOUND, "User not found", null);
+        }
+        return new ResponseData(Status.SUCCESS, ExceptionCode.SUCCESS, "User successfully deleted", "ID: " + userUpdateInput.getId());
+    }
 }

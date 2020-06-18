@@ -25,6 +25,8 @@ public class Subject extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "gradeId")
     private Grade grade;
+    @Column
+    private String image;
 
     public Subject (SubjectInput subjectInput){
         this.name = subjectInput.getName();

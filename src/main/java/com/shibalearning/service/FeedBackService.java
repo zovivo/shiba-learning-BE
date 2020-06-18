@@ -39,8 +39,8 @@ public class FeedBackService {
         User student = userRepository.findById(feedBackInput.getStudentId());
         if (student == null || student.getRole().getId() == 1 )
             throw new SystemException(ExceptionCode.USER_NOT_FOUND);
-        if (feedBackRepository.findFirstByCourse_IdAndUser_Id(feedBackInput.getCourseId(), feedBackInput.getStudentId()) != null)
-            throw new SystemException(ExceptionCode.FEEDBACK_EXISTED);
+//        if (feedBackRepository.findFirstByCourse_IdAndUser_Id(feedBackInput.getCourseId(), feedBackInput.getStudentId()) != null)
+//            throw new SystemException(ExceptionCode.FEEDBACK_EXISTED);
         if (feedBackInput.getRate() > 10.00)
             throw new SystemException(ExceptionCode.RATE_INVALID);
         FeedBack feedBack = new FeedBack(feedBackInput);

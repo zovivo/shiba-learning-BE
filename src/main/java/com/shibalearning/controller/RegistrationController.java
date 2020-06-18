@@ -50,6 +50,11 @@ public class RegistrationController {
         return new ResponseData(Status.SUCCESS, ExceptionCode.SUCCESS, "Success", registrationService.search(page, size, courseId, studentId, active));
     }
 
+    @GetMapping("search-by-studentName")
+    public ResponseData search(@RequestParam int page, @RequestParam int size, @RequestParam(required = false) String studentName) {
+        return new ResponseData(Status.SUCCESS, ExceptionCode.SUCCESS, "Success", registrationService.searchByUserNameStudent(page, size, studentName));
+    }
+
     @PostMapping("update")
     public ResponseData update(@RequestBody RegistrationUpdateInput registrationUpdateInput) {
         Registration registrationUpdated = null;
@@ -123,5 +128,35 @@ public class RegistrationController {
                 return new ResponseData(Status.FAIL, ExceptionCode.REGISTRATION_EXISTED, "Students have already signed up for this course", null);
         }
         return new ResponseData(Status.SUCCESS, ExceptionCode.SUCCESS, "Sign up for the course successfully", registration);
+    }
+
+    @PostMapping("update-point")
+    public ResponseData addPoint(@RequestBody RegistrationInput registrationInput) {
+        Registration registration = null;
+        try {
+            registration = registrationService.addPoint(registrationInput);
+        } catch (SystemException e) {
+            if (e.getExceptionCode() == ExceptionCode.COURSE_NOT_FOUND)
+                return new ResponseData(Status.FAIL, ExceptionCode.COURSE_NOT_FOUND, "No courses found", null);
+            if (e.getExceptionCode() == ExceptionCode.USER_NOT_FOUND)
+                return new ResponseData(Status.FAIL, ExceptionCode.USER_NOT_FOUND, "No student found", null);
+            if (e.getExceptionCode() == ExceptionCode.REGISTRATION_NOT_FOUND)
+                return new ResponseData(Status.FAIL, ExceptionCode.REGISTRATION_NOT_FOUND, "Students have not enrolled in this course yet", null);
+        }
+        return new ResponseData(Status.SUCCESS, ExceptionCode.SUCCESS, "Add point for the course successfully", registration);
+    }
+
+    @GetMapping("search-by-teacherId")
+    public ResponseData searchByTeacherId(@RequestParam int page, @RequestParam int size, @RequestParam long teacherId, @RequestParam (required = false) String studentName) {
+        Page<Registration> registrationPage = null;
+        try {
+            registrationPage = registrationService.searchByTeacher(page,size,teacherId, studentName);
+        } catch (SystemException e) {
+            if (e.getExceptionCode() == ExceptionCode.USER_NOT_FOUND)
+                return new ResponseData(Status.FAIL, ExceptionCode.USER_NOT_FOUND, "No teacher found", null);
+            if (e.getExceptionCode() == ExceptionCode.COURSE_NOT_FOUND)
+                return new ResponseData(Status.FAIL, ExceptionCode.COURSE_NOT_FOUND, "No course found", null);
+        }
+        return new ResponseData(Status.SUCCESS, ExceptionCode.SUCCESS, "Success", registrationPage);
     }
 }

@@ -37,7 +37,7 @@ public class CourseService {
         if (subject == null)
             throw new SystemException(ExceptionCode.SUBJECT_NOT_FOUND);
         User teacher = userRepository.findById(courseInput.getTeacherId());
-        if (teacher == null || teacher.getRole().getId() == 2 )
+        if (teacher == null || teacher.getRole().getId() == 2)
             throw new SystemException(ExceptionCode.USER_NOT_FOUND);
         Course course = new Course(courseInput);
         course.setSubject(subject);
@@ -53,23 +53,23 @@ public class CourseService {
         Course course = courseRepository.findById(courseUpdateInput.getId());
         if (course == null)
             throw new SystemException(ExceptionCode.COURSE_NOT_FOUND);
-        if (courseUpdateInput.getNewSubjectId() > 0 ){
+        if (courseUpdateInput.getNewSubjectId() > 0) {
             Subject newSubject = subjectRepository.findById(courseUpdateInput.getNewSubjectId());
             if (newSubject == null)
                 throw new SystemException(ExceptionCode.SUBJECT_NOT_FOUND);
             else
                 course.setSubject(newSubject);
         }
-        if (courseUpdateInput.getNewTeacherId() > 0 ){
+        if (courseUpdateInput.getNewTeacherId() > 0) {
             User newTeacher = userRepository.findById(courseUpdateInput.getNewTeacherId());
-            if (newTeacher == null || newTeacher.getRole().getId() == 2 )
+            if (newTeacher == null || newTeacher.getRole().getId() == 2)
                 throw new SystemException(ExceptionCode.USER_NOT_FOUND);
             else
                 course.setTeacher(newTeacher);
         }
         if (courseUpdateInput.getNewName() != null && !courseUpdateInput.getNewName().isEmpty())
             course.setName(courseUpdateInput.getNewName());
-        if (courseUpdateInput.getNewDescription() != null )
+        if (courseUpdateInput.getNewDescription() != null)
             course.setDescription(courseUpdateInput.getNewDescription());
         if (courseUpdateInput.getNewImage() != null && courseUpdateInput.getNewImage().getSize() != 0)
             course.setImage(cloudinaryService.uploadFile(courseUpdateInput.getNewImage()));
@@ -78,7 +78,7 @@ public class CourseService {
         return courseRepository.save(course);
     }
 
-    public Page<Course> search(int page, int size, String name, Long subjectId){
+    public Page<Course> search(int page, int size, String name, Long subjectId) {
         Pageable pageable = PageRequest.of(page, size);
         if (name == null)
             name = "";
@@ -97,18 +97,24 @@ public class CourseService {
     public void deleteById(long id) throws SystemException {
         try {
             courseRepository.deleteById((Long) id);
-        }catch (EmptyResultDataAccessException e){
+        } catch (EmptyResultDataAccessException e) {
             throw new SystemException(ExceptionCode.COURSE_NOT_FOUND);
         }
     }
 
-    public Course updateRate(List<FeedBack> feedBacks){
+    public Course updateRate(List<FeedBack> feedBacks) {
         Course course = courseRepository.findById(feedBacks.get(0).getCourse().getId());
         double sumRate = 0.0;
-        for (FeedBack feedBack: feedBacks) {
+        for (FeedBack feedBack : feedBacks) {
             sumRate += feedBack.getRate();
         }
-        course.setRate((double) Math.round(sumRate/feedBacks.size() * 100) / 100);
+        course.setRate((double) Math.round(sumRate / feedBacks.size() * 100) / 100);
         return courseRepository.save(course);
+    }
+
+    public List<Course> getByTeacher(Long teacherId) {
+        if (teacherId == null)
+            return courseRepository.findAll();
+        return courseRepository.findAllByTeacher_Id(teacherId);
     }
 }

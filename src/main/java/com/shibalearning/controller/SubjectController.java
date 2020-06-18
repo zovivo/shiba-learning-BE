@@ -13,13 +13,14 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/subject/")
+//@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class SubjectController {
 
     @Autowired
     private SubjectService subjectService;
 
     @PostMapping("create")
-    public ResponseData create(@RequestBody SubjectInput subjectInput) throws SystemException {
+    public ResponseData create(@ModelAttribute SubjectInput subjectInput) throws SystemException {
         Subject subject = null;
         try {
             subject = subjectService.create(subjectInput);
@@ -57,7 +58,7 @@ public class SubjectController {
     }
 
     @PostMapping("update")
-    public ResponseData update(@RequestBody SubjectUpdateInput subjectUpdateInput) {
+    public ResponseData update(@ModelAttribute SubjectUpdateInput subjectUpdateInput) {
         Subject subject = null;
         try {
             subject = subjectService.update(subjectUpdateInput);
@@ -68,6 +69,11 @@ public class SubjectController {
                 return new ResponseData(Status.FAIL, ExceptionCode.SUBJECT_NOT_FOUND, "No subject found", null);
         }
         return new ResponseData(Status.SUCCESS, ExceptionCode.SUCCESS, "Update subject successfully", subject);
+    }
+
+    @GetMapping("get-all-subject")
+    public ResponseData getAllSubject(){
+        return new ResponseData(Status.SUCCESS, ExceptionCode.SUCCESS,"Success",subjectService.getAllSubject());
     }
 
 }
