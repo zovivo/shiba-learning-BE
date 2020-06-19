@@ -41,7 +41,7 @@ public class FeedBackService {
             throw new SystemException(ExceptionCode.USER_NOT_FOUND);
 //        if (feedBackRepository.findFirstByCourse_IdAndUser_Id(feedBackInput.getCourseId(), feedBackInput.getStudentId()) != null)
 //            throw new SystemException(ExceptionCode.FEEDBACK_EXISTED);
-        if (feedBackInput.getRate() > 10.00)
+        if (feedBackInput.getRate() > 5)
             throw new SystemException(ExceptionCode.RATE_INVALID);
         FeedBack feedBack = new FeedBack(feedBackInput);
         feedBack.setCourse(course);
@@ -67,9 +67,9 @@ public class FeedBackService {
             else
                 feedBackUpdated.setUser(newStudent);
         }
-        if (feedBackUpdateInput.getNewRate() > 10.00)
+        if (feedBackUpdateInput.getNewRate() > 5)
             throw new SystemException(ExceptionCode.RATE_INVALID);
-        if (feedBackUpdateInput.getNewRate() > 0 )
+        if (feedBackUpdateInput.getNewRate() != null && feedBackUpdateInput.getNewRate() >= 0 )
             feedBackUpdated.setRate(feedBackUpdateInput.getNewRate());
         if (feedBackUpdateInput.getNewComment() != null)
             feedBackUpdated.setComment(feedBackUpdateInput.getNewComment());

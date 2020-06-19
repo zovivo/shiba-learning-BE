@@ -13,7 +13,7 @@ public class FeedBackInput {
 
     private long studentId;
     private long courseId;
-    private double rate;
+    private Integer rate;
     private String comment;
 
 }

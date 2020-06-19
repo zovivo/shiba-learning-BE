@@ -83,6 +83,27 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    public User updateById(UserUpdateInput userUpdateInput) throws SystemException {
+        User user = userRepository.findById(userUpdateInput.getId());
+        if (user == null)
+            throw new SystemException(ExceptionCode.USER_NOT_FOUND);
+        if (userUpdateInput.getNewAvatar() != null && userUpdateInput.getNewAvatar().getSize() != 0)
+            user.setAvatar(cloudinaryService.uploadFile(userUpdateInput.getNewAvatar()));
+        if (userUpdateInput.getNewEmail() != null)
+            user.setEmail(userUpdateInput.getNewEmail());
+        if (userUpdateInput.getNewUserName() != null && !userUpdateInput.getNewUserName().isEmpty()){
+            if (userRepository.findFirstByUserName(userUpdateInput.getNewUserName()) != null){
+                if (!user.getUserName().equals(userUpdateInput.getNewUserName()))
+                    throw new SystemException(ExceptionCode.USER_NAME_EXIST);
+            }
+            else user.setUserName(userUpdateInput.getNewUserName());
+            user.setUserName(userUpdateInput.getNewUserName());
+        }
+        if (userUpdateInput.getNewPassword() != null && !userUpdateInput.getNewPassword().isEmpty())
+            user.setPassword(userUpdateInput.getNewPassword());
+        return userRepository.save(user);
+    }
+
     public User changePassword(UserUpdateInput userUpdateInput) {
         User user = userRepository.findFirstByUserName(userUpdateInput.getUserName());
         if (user == null)

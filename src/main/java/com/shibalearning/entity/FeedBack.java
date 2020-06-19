@@ -25,7 +25,7 @@ public class FeedBack extends BaseEntity{
     @JoinColumn(name = "studentId")
     private User user;
     @Column
-    private Double rate;
+    private Integer rate;
     @Column
     private String comment;
 

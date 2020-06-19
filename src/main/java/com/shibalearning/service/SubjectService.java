@@ -73,7 +73,7 @@ public class SubjectService {
         if (subjectUpdateInput.getNewDescription() != null)
             subject.setDescription(subjectUpdateInput.getNewDescription());
         if (subjectUpdateInput.getNewGrade() > 0) {
-            Grade grade = gradeRepository.findById(subjectUpdateInput.getId());
+            Grade grade = gradeRepository.findById(subjectUpdateInput.getNewGrade());
             if (grade == null)
                 throw new SystemException(ExceptionCode.GRADE_NOT_FOUND);
             subject.setGrade(grade);

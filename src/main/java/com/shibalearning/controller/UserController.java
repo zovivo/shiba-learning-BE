@@ -66,6 +66,20 @@ public class UserController {
         return new ResponseData(Status.SUCCESS,ExceptionCode.SUCCESS,"Update account information successfully",user);
     }
 
+    @PostMapping("update-by-id")
+    public ResponseData updateById(@ModelAttribute UserUpdateInput userUpdateInput){
+        User user = null;
+        try {
+            user = userService.updateById(userUpdateInput);
+        } catch (SystemException e) {
+            if (e.getExceptionCode() == ExceptionCode.USER_NOT_FOUND)
+                return new ResponseData(Status.FAIL, ExceptionCode.USER_NOT_FOUND,"No user found",null);
+            if (e.getExceptionCode() == ExceptionCode.USER_NAME_EXIST)
+                return new ResponseData(Status.FAIL, ExceptionCode.USER_NAME_EXIST,"User name existed",null);
+        }
+        return new ResponseData(Status.SUCCESS,ExceptionCode.SUCCESS,"Update account information successfully",user);
+    }
+
     @PostMapping("change-password")
     public ResponseData changePassword(@RequestBody UserUpdateInput userUpdateInput){
         User user = userService.changePassword(userUpdateInput);

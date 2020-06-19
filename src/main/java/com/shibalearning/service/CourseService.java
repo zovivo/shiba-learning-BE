@@ -108,7 +108,8 @@ public class CourseService {
         for (FeedBack feedBack : feedBacks) {
             sumRate += feedBack.getRate();
         }
-        course.setRate((double) Math.round(sumRate / feedBacks.size() * 100) / 100);
+        course.setRate((double) Math.round(sumRate/feedBacks.size()*10)/10);
+        System.out.println("sumRate: "+sumRate);
         return courseRepository.save(course);
     }
 

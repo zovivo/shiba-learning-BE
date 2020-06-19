@@ -14,6 +14,6 @@ public class FeedBackUpdateInput {
     private long id;
     private long newStudentId;
     private long newCourseId;
-    private double newRate;
+    private Integer newRate;
     private String newComment;
 }

@@ -18,4 +18,5 @@ public class UserUpdateInput {
     private String newEmail;
     private MultipartFile newAvatar;
     private long id;
+    private String newUserName;
 }

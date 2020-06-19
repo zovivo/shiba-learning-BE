@@ -26,6 +26,6 @@ public class Registration extends BaseEntity {
     @Column(columnDefinition = "boolean default false")
     private boolean active;
     @Column
-    private Double point;
+    private Integer point;
 
 }
