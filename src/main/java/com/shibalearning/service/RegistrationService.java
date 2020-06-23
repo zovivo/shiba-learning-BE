@@ -156,7 +156,7 @@ public class RegistrationService {
         Registration registration = registrationRepository.findFirstByUser_IdAndCourse_Id(student.getId(), registrationInput.getCourseId());
         if (registration == null)
             throw new SystemException(ExceptionCode.REGISTRATION_NOT_FOUND);
-        registration.setPoint((int) registrationInput.getPoint()*10/5);
+        registration.setPoint((int) registrationInput.getPoint());
         return registrationRepository.save(registration);
     }
 

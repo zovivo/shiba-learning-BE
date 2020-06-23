@@ -16,6 +16,6 @@ public class UserInput {
     private String password;
     private String email;
     private MultipartFile avatar;
-    private int type;
+    private Integer type;
 
 }

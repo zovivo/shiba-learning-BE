@@ -54,15 +54,19 @@ public class UserService {
             throw new SystemException(ExceptionCode.EMAIL_EXIST);
         }
         User user = new User(userInput);
-        if (userInput.getType() == 1) {
-            Role teacher = roleRepository.findById(1);
-            user.setRole(teacher);
-        } else if (userInput.getType() == 0) {
-            Role student = roleRepository.findById(0);
-            user.setRole(student);
-        } else {
-            Role student = roleRepository.findById(2);
-            user.setRole(student);
+        if (userInput.getType() == null)
+            user.setRole(roleRepository.findById(2));
+        else {
+            if (userInput.getType() == 1) {
+                Role teacher = roleRepository.findById(1);
+                user.setRole(teacher);
+            } else if (userInput.getType() == 0) {
+                Role student = roleRepository.findById(0);
+                user.setRole(student);
+            } else {
+                Role student = roleRepository.findById(2);
+                user.setRole(student);
+            }
         }
         if (userInput.getAvatar() != null && userInput.getAvatar().getSize() != 0) {
             String avatar = cloudinaryService.uploadFile(userInput.getAvatar());
@@ -91,12 +95,11 @@ public class UserService {
             user.setAvatar(cloudinaryService.uploadFile(userUpdateInput.getNewAvatar()));
         if (userUpdateInput.getNewEmail() != null)
             user.setEmail(userUpdateInput.getNewEmail());
-        if (userUpdateInput.getNewUserName() != null && !userUpdateInput.getNewUserName().isEmpty()){
-            if (userRepository.findFirstByUserName(userUpdateInput.getNewUserName()) != null){
+        if (userUpdateInput.getNewUserName() != null && !userUpdateInput.getNewUserName().isEmpty()) {
+            if (userRepository.findFirstByUserName(userUpdateInput.getNewUserName()) != null) {
                 if (!user.getUserName().equals(userUpdateInput.getNewUserName()))
                     throw new SystemException(ExceptionCode.USER_NAME_EXIST);
-            }
-            else user.setUserName(userUpdateInput.getNewUserName());
+            } else user.setUserName(userUpdateInput.getNewUserName());
             user.setUserName(userUpdateInput.getNewUserName());
         }
         if (userUpdateInput.getNewPassword() != null && !userUpdateInput.getNewPassword().isEmpty())
@@ -139,7 +142,7 @@ public class UserService {
     public void deleteById(long id) throws SystemException {
         try {
             userRepository.deleteById((Long) id);
-        }catch (EmptyResultDataAccessException e){
+        } catch (EmptyResultDataAccessException e) {
             throw new SystemException(ExceptionCode.USER_NOT_FOUND);
         }
     }
